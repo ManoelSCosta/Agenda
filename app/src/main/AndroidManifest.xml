@@ -22,7 +22,9 @@
         <activity android:name=".AgendaCompromissosActivity" />
         <activity android:name=".NovoCompromissoActivity" />
         <activity android:name=".ListaCompromissosDia" />
-        <activity android:name=".DetalheCompromisso"></activity>
+        <activity android:name=".DetalheCompromisso" />
+        <activity android:name=".IncluirAlarmeActivity"></activity>
+        <receiver  android:name=".Alarme"></receiver>
     </application>
 
 </manifest>

@@ -18,6 +18,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.InputStream;
+import java.io.Serializable;
 
 public class DetalheCompromisso extends AppCompatActivity {
 
@@ -51,6 +52,9 @@ public class DetalheCompromisso extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                Intent incluirAlarme = new Intent(mContext, IncluirAlarmeActivity.class);
+                incluirAlarme.putExtra("compromisso", (Serializable) compromisso);
+                startActivity(incluirAlarme);
             }
         });
 
