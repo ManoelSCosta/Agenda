@@ -2,18 +2,35 @@ package com.agenda;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class AgendaCompromissosActivity extends AppCompatActivity {
 
@@ -28,9 +45,10 @@ public class AgendaCompromissosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agenda_compromissos);
 
+        new ConsultarCompromissosTask().execute();
+
         mContext = getBaseContext();
         month = Calendar.getInstance();
-        onNewIntent(getIntent());
 
         itens = new ArrayList<String>();
 
@@ -79,15 +97,14 @@ public class AgendaCompromissosActivity extends AppCompatActivity {
                 TextView date = (TextView)v.findViewById(R.id.date);
                 if(date instanceof TextView && !date.getText().equals("")) {
 
-                    Intent intent = new Intent();
+                    Intent compromissosDia = new Intent(mContext, ListaCompromissosDia.class);
                     String day = date.getText().toString();
-                    if(day.length()==1) {
-                        day = "0"+day;
+                    if(day.length() == 1) {
+                        day = "0" + day;
                     }
 
-                    intent.putExtra("date", android.text.format.DateFormat.format("yyyy-MM", month)+"-"+day);
-                    setResult(RESULT_OK, intent);
-                    finish();
+                    compromissosDia.putExtra("data", day + "/" + android.text.format.DateFormat.format("MM/yyyy", month));
+                    startActivity(compromissosDia);
                 }
 
             }
@@ -113,30 +130,110 @@ public class AgendaCompromissosActivity extends AppCompatActivity {
         title.setText(android.text.format.DateFormat.format("MMMM yyyy", month));
     }
 
-    public void onNewIntent(Intent intent) {
-
-        String date = AgendaUtil.todayString();
-        String[] dateArr = date.split("-");
-        month.set(Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]), Integer.parseInt(dateArr[2]));
-    }
-
     public Runnable calendarUpdater = new Runnable() {
 
         @Override
         public void run() {
             itens.clear();
 
-            for(int i=0;i<31;i++) {
-                Random r = new Random();
+            Calendar c = Calendar.getInstance();
+            int mes = c.get(Calendar.MONTH);
+            ArrayList<String> compromissosMes = new ArrayList<>();
 
-                if(r.nextInt(10)>6)
-                {
-                    itens.add(Integer.toString(i));
+            for(int i = 0; i < AgendaUtil.compromissos.size(); i++){
+
+                String[] diaCompromisso = AgendaUtil.compromissos.get(i).getData().split("/");
+
+                if((mes + 1) == Integer.parseInt(diaCompromisso[1])){
+                    compromissosMes.add(diaCompromisso[0]);
                 }
             }
 
-            adapter.setItens(itens);
+            Set<String> hs = new HashSet<>();
+            hs.addAll(compromissosMes);
+            compromissosMes.clear();
+            compromissosMes.addAll(hs);
+
+            adapter.setItens(compromissosMes);
             adapter.notifyDataSetChanged();
         }
     };
+
+    private ArrayList<Compromisso> consultarCompromissos() {
+
+        InputStream inputStream = null;
+        String result = "";
+
+        try{
+
+            String st = AgendaUtil.URL_SERVICOS + AgendaUtil.URL_COMPROMISSOS + "?idUsuario=" + AgendaUtil.idUsuario;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(st);
+
+            HttpResponse httpResponse = httpclient.execute(httpGet);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if(inputStream != null){
+                result = AgendaUtil.inputStreamToString(inputStream);
+            } else {
+                result = "erro";
+            }
+
+        } catch (Exception e){
+
+            Log.e("LoginActivity", e.getMessage(), e);
+        }
+
+        JSONObject json = null;
+
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+
+            json = new JSONObject("{'json':" + result + "}");
+
+            jsonArray = json.getJSONArray("json");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<Compromisso> compromissos = new ArrayList<Compromisso>();
+
+        for (int i = 0 ; i < jsonArray.length(); i++) {
+
+            Compromisso compromisso = new Compromisso();
+            try {
+                JSONObject compromissoJson = jsonArray.getJSONObject(i);
+                compromisso.setId(compromissoJson.getInt("id"));
+                compromisso.setIdUsuario(compromissoJson.getInt("idUsuario"));
+                compromisso.setData(compromissoJson.getString("data"));
+                compromisso.setHorario(compromissoJson.getString("horario"));
+                compromisso.setDescricao(compromissoJson.getString("descricao"));
+                compromissos.add(compromisso);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return compromissos;
+    }
+
+    private class ConsultarCompromissosTask extends AsyncTask<Compromisso, Compromisso, ArrayList<Compromisso>> {
+        @Override
+        protected ArrayList<Compromisso> doInBackground(Compromisso... usuario) {
+
+            return consultarCompromissos();
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Compromisso> compromissos) {
+
+            AgendaUtil.compromissos = compromissos;
+            handler.post(calendarUpdater);
+        }
+
+    }
 }

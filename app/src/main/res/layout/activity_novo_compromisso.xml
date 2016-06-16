@@ -12,7 +12,7 @@
 
 
     <TextView
-        android:id="@+id/titulo_criar_usuario"
+        android:id="@+id/titulo_novo_compromisso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_below="@+id/titulo_criar_usuario">
+        android:layout_below="@id/titulo_novo_compromisso">
 
         <LinearLayout
             android:layout_width="150dp"
@@ -33,16 +33,46 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/titulo_data_hora"
+                android:id="@+id/titulo_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:text="Data e hora:"/>
+                android:text="Data:"/>
 
-            <EditText
-                android:id="@+id/input_data_hora"
+            <TextView
+                android:id="@+id/data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btn_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Selecionar data"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/titulo_horario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentLeft="true"
+                android:text="Horário:"/>
+
+            <TextView
+                android:id="@+id/hora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btn_hora"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Selecionar horário"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
                 android:singleLine="true"/>
 
             <TextView
@@ -54,12 +84,11 @@
                 android:text="Descrição:"/>
 
             <EditText
-                android:id="@+id/input_descricao"
+                android:id="@+id/descricao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/titulo_senha"
                 android:inputType="textMultiLine"
-                android:lines="2"
                 android:singleLine="true"/>
 
             <Button

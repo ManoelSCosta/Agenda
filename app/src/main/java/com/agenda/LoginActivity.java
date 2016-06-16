@@ -107,8 +107,9 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String resultado) {
 
-            if(resultado != null && resultado.equals("1")){
+            if(resultado != null && Integer.parseInt(resultado) > 0){
 
+                AgendaUtil.idUsuario = Integer.parseInt(resultado);
                 Intent agenda = new Intent(context, AgendaCompromissosActivity.class);
                 startActivity(agenda);
 
