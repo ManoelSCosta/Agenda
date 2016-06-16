@@ -21,6 +21,7 @@ public class AgendaUtil {
     public static final String URL_SERVICOS = "http://10.0.2.2:8081/agenda-services";
     public static final String URL_USUARIOS = "/usuarios";
     public static final String URL_COMPROMISSOS = "/compromissos";
+    public static final String URL_EXCLUIR = "/excluir";
 
     public static String inputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
