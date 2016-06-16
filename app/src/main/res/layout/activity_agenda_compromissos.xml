@@ -34,7 +34,8 @@
                 android:textColor="@android:color/white"
                 android:gravity="center_horizontal"
                 android:text="&lt;&lt;"
-                android:clickable="true" />
+                android:clickable="true"
+                android:visibility="invisible"/>
 
         </LinearLayout>
 
@@ -68,6 +69,7 @@
                 android:textColor="@android:color/white"
                 android:gravity="center_horizontal"
                 android:text=">>"
+                android:visibility="invisible"
                 android:clickable="true" />
         </LinearLayout>
 

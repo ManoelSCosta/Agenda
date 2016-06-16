@@ -1,8 +1,9 @@
 package com.agenda;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Compromisso {
+public class Compromisso implements Serializable{
 
     private int id;
     private int idUsuario;

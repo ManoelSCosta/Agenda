@@ -1,9 +1,11 @@
 package com.agenda;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -97,14 +99,47 @@ public class AgendaCompromissosActivity extends AppCompatActivity {
                 TextView date = (TextView)v.findViewById(R.id.date);
                 if(date instanceof TextView && !date.getText().equals("")) {
 
-                    Intent compromissosDia = new Intent(mContext, ListaCompromissosDia.class);
                     String day = date.getText().toString();
-                    if(day.length() == 1) {
-                        day = "0" + day;
+                    String diaSelecionado = day + "/" + android.text.format.DateFormat.format("MM/yyyy", month);
+
+                    String[] dia = diaSelecionado.split("/");
+
+                    diaSelecionado = Integer.parseInt(dia[0]) + "/" + Integer.parseInt(dia[1]) + "/" + Integer.parseInt(dia[2]);
+
+                    boolean possuiCompromissos = false;
+
+                    for(int i = 0; i < AgendaUtil.compromissos.size(); i++){
+
+                        if(AgendaUtil.compromissos.get(i).getData().equals(diaSelecionado)){
+                            possuiCompromissos = true;
+                            break;
+                        }
                     }
 
-                    compromissosDia.putExtra("data", day + "/" + android.text.format.DateFormat.format("MM/yyyy", month));
-                    startActivity(compromissosDia);
+                    if(possuiCompromissos){
+
+                        Intent compromissosDia = new Intent(mContext, ListaCompromissosDia.class);
+                        if(day.length() == 1) {
+                            day = "0" + day;
+                        }
+
+                        compromissosDia.putExtra("data", diaSelecionado);
+                        startActivity(compromissosDia);
+                    } else {
+
+                        AlertDialog alertDialog = new AlertDialog.Builder(AgendaCompromissosActivity.this).create();
+                        alertDialog.setTitle("Atenção");
+                        alertDialog.setMessage("Não há compromissos para a data selecionada.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+
+
                 }
 
             }

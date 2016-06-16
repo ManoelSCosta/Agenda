@@ -21,7 +21,8 @@
         <activity android:name=".CriarUsuarioActivity" />
         <activity android:name=".AgendaCompromissosActivity" />
         <activity android:name=".NovoCompromissoActivity" />
-        <activity android:name=".ListaCompromissosDia"></activity>
+        <activity android:name=".ListaCompromissosDia" />
+        <activity android:name=".DetalheCompromisso"></activity>
     </application>
 
 </manifest>
