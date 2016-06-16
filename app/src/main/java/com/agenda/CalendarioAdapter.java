@@ -107,7 +107,7 @@ public class CalendarioAdapter extends BaseAdapter {
 
     public void refreshDays() {
 
-        itens.clear();
+       /* itens.clear();*/
 
         int lastDay = month.getActualMaximum(Calendar.DAY_OF_MONTH);
         int firstDay = (int)month.get(Calendar.DAY_OF_WEEK);
